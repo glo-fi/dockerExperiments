@@ -20,22 +20,19 @@ request = portal.context.makeRequestRSpec()
 # Create LAN to put containers into
 lan = request.LAN("lan")
 
-node1 = request.DockerContainer("node0") # Node running Apache in Container
+# Add regular node for testing apache
+host1 = request.RawPC("host1")
+node1 = request.DockerContainer("node1") # Node running Apache in Container
+
+
 
 host0 = request.RawPC("host0")
 host0.hardware_type = "d430"
-
-
 # Add a DockerContainer to the request
 node0 = request.DockerContainer("node0") # Node running Apache in Container
 node0.docker_extimage = "apache:2.4"
 node0.exclusive = True
 
-
-
-
-# Add regular node for testing apache
-host1 = request.RawPC("host1")
 
 
 iface1 = node0.addInterface("if1")
