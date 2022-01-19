@@ -33,7 +33,7 @@ node0.exclusive = True
 node1 = request.RawPC("node1")
 
 
-iface1 = node0.addInterface("if1")
+iface1 = host.addInterface("if1")
 iface1.component_id = "eth1"
 iface1.addAddress(rspec.IPv4Address("192.168.1.1", "255.255.255.0"))
 
