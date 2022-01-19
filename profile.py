@@ -34,9 +34,15 @@ node1 = request.RawPC("node1")
 
 
 iface1 = node0.addInterface("if1")
+iface1.component_id = "eth1"
+iface1.addAddress(rspec.IPv4Address("192.168.1.1", "255.255.255.0"))
+
 iface2 = node1.addInterface("if1")
+iface2.component_id = "eth1"
+iface2.addAddress(rspec.IPv4Address("192.168.1.2", "255.255.255.0"))
 
 lan.addInterface(iface1)
+
 lan.addInterface(iface2)
 
 # Add Docker Contaner to host
