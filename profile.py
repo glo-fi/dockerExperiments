@@ -27,11 +27,11 @@ node1 = request.DockerContainer("node1") # Node running Apache in Container
 
 
 host0 = request.RawPC("host0")
-host0.hardware_type = "d430"
+#host0.hardware_type = "d430"
 # Add a DockerContainer to the request
 node0 = request.DockerContainer("node0") # Node running Apache in Container
-node0.docker_extimage = "httpd:2.4"
-node0.exclusive = True
+#node0.docker_extimage = "httpd:2.4"
+#node0.exclusive = True
 
 
 
