@@ -10,6 +10,7 @@ Goal: Get Apache running via this scripting interface.
 import geni.portal as portal
 import geni.rspec.pg as rspec
 
+import geni.rspec.emulab as emulab
 # Create a Request Obect to start building the rspec
 request = portal.context.makeRequestRSpec()
 
