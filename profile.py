@@ -35,9 +35,9 @@ if params.create_lan:
         else:
             lan.request.LAN()
 
-def run_install_scripts(node, script):
+def run_install_script(node, script):
     node.addService(pg.Execute(shell='bash', command='chmod +x /local/repository/install/' + script))
-    node.addService(pg.Execute(shell='bash'), command='/local/repository/install/' + script)
+    node.addService(pg.Execute(shell='bash', command='/local/repository/install/' + script))
 
 
 for i in range(params.node_count):
