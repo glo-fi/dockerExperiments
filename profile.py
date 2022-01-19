@@ -52,5 +52,5 @@ node0.InstantiateOn(host0.client_id)
 node1.InstantiateOn(host1.client_id)
 
 # Write the request in rspec format
-node1.addService(rspec.Execute(shell="bash", command='sudo docker run -dit --name apache-app -p 8080:80 -v /local/repository/htdocs:/usr/local/apache2/htdocs/ httpd:2.4'))
+#node1.addService(rspec.Execute(shell="bash", command='sudo docker run -dit --name apache-app -p 8080:80 -v /local/repository/htdocs:/usr/local/apache2/htdocs/ httpd:2.4'))
 portal.context.printRequestRSpec()
