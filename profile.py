@@ -1,56 +1,54 @@
 """
-Basic Geni-lib example
-
-Goal: Get Apache running via this scripting interface.
-
-NB: Tried to get Docker container running on raw pc and connected to another raw pc. That isn't working and it actually seems easier to connect it to another docker container running on that pc.
+General script for spawning nodes and containers
 """
 
 
-# import portal object
-
 import geni.portal as portal
-import geni.rspec.pg as rspec
-
+import geni.rspec.pg as pg
 import geni.rspec.emulab as emulab
+import geni.rspec.igext as igext
 
-# Create a Request Obect to start building the rspec
-request = portal.context.makeRequestRSpec()
-
-# Create LAN to put containers into
-lan = request.LAN("lan")
-
-# Add regular node for testing apache
-host1 = request.RawPC("host1")
-node1 = request.DockerContainer("node1") # Node running Apache in Container
+# Define constants here
 
 
 
-host0 = request.RawPC("host0")
-#host0.hardware_type = "d430"
-# Add a DockerContainer to the request
-node0 = request.DockerContainer("node0") # Node running Apache in Container
-#node0.docker_extimage = "httpd:2.4"
-#node0.exclusive = True
+
+# Create Portal Context
+
+pc = portal.Context()
+
+# Build Request Object for RSpec
+request = pc.makeRequestRSpec()
+
+# Define, Build and Verify Parameters
+
+pc.defineParameter('node_count', 'Number of nodes', portal.ParameterType.INTEGER, 2)
+pc.defineParameter('create_lan', 'Create Vertual LAN', portal.ParameterType.BOOLEAN, 'True')
+
+params = pc.bindParameters()
+pc.verifyParameters()
+
+if params.create_lan:
+    if params.node_count > 1:
+        if params.node_count == 2:
+            lan = request.Link()
+        else:
+            lan.request.LAN()
+
+def run_install_scripts(node, script):
+    node.addService(pg.Execute(shell='bash', command='chmod +x /local/repository/install/' + script))
+    node.addService(pg.Execute(shell='bash'), command='/local/repository/install/' + script)
 
 
+for i in range(params.node_count):
+    node = request.RawPC('node' + str(i))
 
-iface1 = node0.addInterface("if1")
-#iface1.component_id = "eth1"
-#iface1.addAddress(rspec.IPv4Address("192.168.1.1", "255.255.255.0"))
+    if params.create_lan:
+        if params.node_count > 1:
+            iface = node.addInterface('eth1')
+            lan.addInterface(iface)
 
-iface2 = node1.addInterface("if1")
-#iface2.component_id = "eth1"
-#iface2.addAddress(rspec.IPv4Address("192.168.1.2", "255.255.255.0"))
+    run_install_script(node, 'install_docker.sh')
+    run_install_script(node, 'install_docker_compose.sh')
 
-lan.addInterface(iface1)
-
-lan.addInterface(iface2)
-
-# Add Docker Contaner to host
-node0.InstantiateOn(host0.client_id)
-node1.InstantiateOn(host1.client_id)
-
-# Write the request in rspec format
-#node1.addService(rspec.Execute(shell="bash", command='sudo docker run -dit --name apache-app -p 8080:80 -v /local/repository/htdocs:/usr/local/apache2/htdocs/ httpd:2.4'))
-portal.context.printRequestRSpec()
+pc.printRequestRSpec(request)
