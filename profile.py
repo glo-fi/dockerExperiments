@@ -56,7 +56,7 @@ def build_local_dockerfile(node, dockerfile):
 def attach_tcpdump(node, container_name):
     tcpdump_id  = randint(0, 10000)
     node.addService(pg.Execute(shell='bash', command='TIME=$(date +\'%T\' | sed \'s/:/_/g\''))
-    node.addService(pg.Execute(shell='bash', command='sudo docker run -v /local/repository/collectedData:/data --network=container:' + container_name + ' docker-tcpdump_' + tcpdump_id  + '  \' -v -w /data/${TIME}_' + container_name + '.pcap \''))
+    node.addService(pg.Execute(shell='bash', command='sudo docker run -v /local/repository/collectedData:/data --network=container:' + container_name + ' --name docker_tcpdump ' + tcpdump_id  +  ' docker-tcpdump \' -v -w /data/${TIME}_' + container_name + '.pcap \''))
 
 for i in range(params.node_count):
     node = request.RawPC('node' + str(i))
