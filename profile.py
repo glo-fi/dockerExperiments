@@ -24,7 +24,7 @@ request = pc.makeRequestRSpec()
 
 pc.defineParameter('node_count', 'Number of nodes', portal.ParameterType.INTEGER, 2)
 pc.defineParameter('create_lan', 'Create Virtual LAN', portal.ParameterType.BOOLEAN, 'True')
-pc.defineParameter('scenario', 'Choose scenario to run (test, httpd) ', portal.ParameterType.STRING, None)
+pc.defineParameter('scenario', 'Choose scenario to run (test, httpd) ', portal.ParameterType.STRING, "test")
 
 params = pc.bindParameters()
 
