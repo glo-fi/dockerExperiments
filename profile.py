@@ -52,6 +52,7 @@ def build_local_dockerfile(node, dockerfile):
     node.addService(pg.Execute(shell='bash', command='sudo docker build -t ' + dockerfile + ' /local/repository/detgenScripts/images/' + dockerfile + '/'))
 
 def attach_tcpdump(node, container_name):
+    run_init_script(node, 'docker-tcpdump.sh')
     node.addService(pg.Execute(shell='bash', command='TIME=$(date +\'%T\' | sed \'s/:/_/g\''))
     node.addService(pg.Execute(shell='bash', command='sudo docker run -v /local/repository/collectedData:/data --network=container:' + container_name + ' docker-tcpdump \' -v -w /data/${TIME}_' + container_name + '.pcap \''))
 
@@ -70,11 +71,11 @@ for i in range(params.node_count):
         pass
     elif params.scenario == "httpd":
         if i == 0:
-            run_init_script(node, 'init-httpd.sh')
+            run_init_script(node, 'init_httpd.sh')
             attach_tcpdump(node, 'docker-httpd')
-        if i == 1:
+        elif i == 1:
             build_local_dockerfile(node, 'docker-wget')
-            run_init_script(node, 'init-wget.sh')
+            run_init_script(node, 'init_wget.sh')
             attach_tcpdump(node, 'docker-wget')
         
 pc.printRequestRSpec(request)
