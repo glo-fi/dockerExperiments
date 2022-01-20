@@ -8,6 +8,8 @@ import geni.rspec.pg as pg
 import geni.rspec.emulab as emulab
 import geni.rspec.igext as igext
 
+from random import randint
+
 # Define constants here
 
 
@@ -52,9 +54,9 @@ def build_local_dockerfile(node, dockerfile):
     node.addService(pg.Execute(shell='bash', command='sudo docker build -t ' + dockerfile + ' /local/repository/detgenScripts/images/' + dockerfile + '/'))
 
 def attach_tcpdump(node, container_name):
-    node.addService(pg.Execute(shell='bash', command='NO=$((1 + $RANDOM % 10000))'))
+    tcpdump_id  = randint(0, 10000)
     node.addService(pg.Execute(shell='bash', command='TIME=$(date +\'%T\' | sed \'s/:/_/g\''))
-    node.addService(pg.Execute(shell='bash', command='sudo docker run -v /local/repository/collectedData:/data --network=container:' + container_name + ' docker-tcpdump_${NO} \' -v -w /data/${TIME}_' + container_name + '.pcap \''))
+    node.addService(pg.Execute(shell='bash', command='sudo docker run -v /local/repository/collectedData:/data --network=container:' + container_name + ' docker-tcpdump_' + tcpdump_id  + '  \' -v -w /data/${TIME}_' + container_name + '.pcap \''))
 
 for i in range(params.node_count):
     node = request.RawPC('node' + str(i))
