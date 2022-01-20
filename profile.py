@@ -52,9 +52,9 @@ def build_local_dockerfile(node, dockerfile):
     node.addService(pg.Execute(shell='bash', command='sudo docker build -t ' + dockerfile + ' /local/repository/detgenScripts/images/' + dockerfile + '/'))
 
 def attach_tcpdump(node, container_name):
-    run_init_script(node, 'docker-tcpdump.sh')
+    node.addService(pg.Execute(shell='bash', command='NO=$((1 + $RANDOM % 10000))'))
     node.addService(pg.Execute(shell='bash', command='TIME=$(date +\'%T\' | sed \'s/:/_/g\''))
-    node.addService(pg.Execute(shell='bash', command='sudo docker run -v /local/repository/collectedData:/data --network=container:' + container_name + ' docker-tcpdump \' -v -w /data/${TIME}_' + container_name + '.pcap \''))
+    node.addService(pg.Execute(shell='bash', command='sudo docker run -v /local/repository/collectedData:/data --network=container:' + container_name + ' docker-tcpdump_${NO} \' -v -w /data/${TIME}_' + container_name + '.pcap \''))
 
 for i in range(params.node_count):
     node = request.RawPC('node' + str(i))
@@ -71,10 +71,12 @@ for i in range(params.node_count):
         pass
     elif params.scenario == "httpd":
         if i == 0:
+            build_local_dockerfile(node, 'docker-tcpdump')
             run_init_script(node, 'init_httpd.sh')
             attach_tcpdump(node, 'docker-httpd')
         elif i == 1:
             build_local_dockerfile(node, 'docker-wget')
+            build_local_dockerfile(node, 'docker-tcpdump')
             run_init_script(node, 'init_wget.sh')
             attach_tcpdump(node, 'docker-wget')
         
