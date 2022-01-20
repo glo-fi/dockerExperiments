@@ -54,7 +54,7 @@ def build_local_dockerfile(node, dockerfile):
 def attach_tcpdump(node, container_name):
     node.addService(pg.Execute(shell='bash', command='sudo docker run -v /local/repository/collectedData:/data --network=container:' + container_name + ' docker-tcpdump /usr/sbin/tcpdump')
 
-for i in range(params.node_count
+for i in range(params.node_count:
     node = request.RawPC('node' + str(i))
 
     if params.create_lan:
