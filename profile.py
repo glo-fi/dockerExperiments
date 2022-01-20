@@ -24,7 +24,7 @@ request = pc.makeRequestRSpec()
 
 pc.defineParameter('node_count', 'Number of nodes', portal.ParameterType.INTEGER, 2)
 pc.defineParameter('create_lan', 'Create Virtual LAN', portal.ParameterType.BOOLEAN, 'True')
-pc.defineParameter('scenario', 'Choose scenario to run (test, httpd) ', portal.ParameterType.STRING, "test")
+pc.defineParameter('scenario', 'Choose scenario to run (test, httpd) ', portal.ParameterType.STRING, "httpd")
 
 params = pc.bindParameters()
 
@@ -52,7 +52,8 @@ def build_local_dockerfile(node, dockerfile):
     node.addService(pg.Execute(shell='bash', command='sudo docker build -t ' + dockerfile + ' /local/repository/detgenScripts/images/' + dockerfile + '/'))
 
 def attach_tcpdump(node, container_name):
-    node.addService(pg.Execute(shell='bash', command='sudo docker run -v /local/repository/collectedData:/data --network=container:' + container_name + ' docker-tcpdump /usr/sbin/tcpdump'))
+    node.addService(pg.Execute(shell='bash', command='TIME=$(date +\'%T\' | sed \'s/:/_/g\''))
+    node.addService(pg.Execute(shell='bash', command='sudo docker run -v /local/repository/collectedData:/data --network=container:' + container_name + ' docker-tcpdump \' -v -w /data/${TIME}_' + container_name + '.pcap \''))
 
 for i in range(params.node_count):
     node = request.RawPC('node' + str(i))
@@ -64,14 +65,16 @@ for i in range(params.node_count):
 
     run_install_script(node, 'install_docker.sh')
     run_install_script(node, 'install_docker_compose.sh')
-    
+
     if params.scenario == "test":
         pass
-    elif params.scenaro == "httpd":
+    elif params.scenario == "httpd":
         if i == 0:
             run_init_script(node, 'init-httpd.sh')
+            attach_tcpdump(node, 'docker-httpd')
         if i == 1:
             build_local_dockerfile(node, 'docker-wget')
             run_init_script(node, 'init-wget.sh')
+            attach_tcpdump(node, 'docker-wget')
         
 pc.printRequestRSpec(request)
