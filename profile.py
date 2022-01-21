@@ -61,7 +61,7 @@ def attach_tcpdump(node, container_name):
 def execute_container_script(node, container_name, script, *args):
     arg_list = []
     for arg in args:
-        arg_list.append(args)
+        arg_list.append(arg)
     arg_string = ' '.join(arg_list)
     node.addService(pg.Execute(shell='bash', command='sudo docker exec ' + container_name + ' /local/scripts/' + script + ' ' + arg_string))
 
