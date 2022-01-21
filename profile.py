@@ -63,7 +63,7 @@ for i in range(params.node_count):
 
     if params.create_lan:
         if params.node_count > 1:
-            iface = node.addInterface('eth1')
+            iface = node.addInterface('eth1', pg.IPv4Address('192.168.6.%d' % (i+1), '255.255.255.0'))
             lan.addInterface(iface)
 
     run_install_script(node, 'install_docker.sh')
