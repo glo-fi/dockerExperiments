@@ -65,8 +65,6 @@ def execute_container_script(node, container_name, script, *args):
     arg_string = ' '.join(arg_list)
     node.addService(pg.Execute(shell='bash', command='sudo docker exec ' + container_name + ' /local/scripts/' + script + ' ' + arg_string))
 
-    sudo docker exec docker-wget /local/scripts/exec_wget.sh
-
 for i in range(params.node_count):
     node = request.RawPC('node' + str(i))
 
