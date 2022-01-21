@@ -58,6 +58,15 @@ def attach_tcpdump(node, container_name):
     node.addService(pg.Execute(shell='bash', command='chmod +x /local/repository/detgenScripts/init/init_tcpdump.sh'))
     node.addService(pg.Execute(shell='bash', command='sudo /local/repository/detgenScripts/init/init_tcpdump.sh ' + container_name + ' ' + tcpdump_id))
 
+def execute_container_script(node, container_name, script, *args):
+    arg_list = []
+    for arg in args:
+        arg_list.append(args)
+    arg_string = ' '.join(arg_list)
+    node.addService(pg.Execute(shell='bash', command='sudo docker exec ' + container_name + ' /local/scripts/' + script + ' ' + arg_string))
+
+    sudo docker exec docker-wget /local/scripts/exec_wget.sh
+
 for i in range(params.node_count):
     node = request.RawPC('node' + str(i))
 
@@ -81,5 +90,6 @@ for i in range(params.node_count):
             build_local_dockerfile(node, 'docker-tcpdump')
             run_init_script(node, 'init_wget.sh')
             attach_tcpdump(node, 'docker-wget')
+            execute_container_script(node, 'docker-wget', 'exec_wget.sh', '192.168.6.1', '5')
         
 pc.printRequestRSpec(request)
